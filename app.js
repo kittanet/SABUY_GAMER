@@ -1,62 +1,33 @@
 var express = require('express')
 var app = express()
-var bodyParser = require('body-parser')
+var bodyparser = require('body-parser')
 var mongoose = require('mongoose')
+var cors = require('cors')
 var port = 3000
 
-app.listen(port)
-console.log('running on port ',port)
+const route = require('./route/routes')
 
-// send data
-app.use(bodyParser.json())
-app.use(bodyParser.urlencoded({extended: true}))
+mongoose.connect('mongodb://localhost/sabuygamer')
 
-/*Genre = require('./models/genre')
-Book = require('./models/book')
-mongoose.connect('mongodb://localhost/bookstore01')
-var db = mongoose.connection
-*/
+mongoose.connection.on('connected', function(){
+    console.log('MongoDB connected at port 27017')
+})
+
+mongoose.connection.on('error',function(err){
+    console.log(err)
+})
+
+app.use(cors())
+
+app.use(bodyparser.json())
+
+app.use('/api',route)
+
 
 app.get('/',function(req, res){
-    res.send('SABUY')
+    res.send('foobar')
 })
 
-/*
-app.get('/api/genres',function(req, res){
-Genre.getGenres((err, genres) => {
-if (err) {
-throw err
-}
-res.json(genres)
+app.listen(port,function(){
+    console.log('Server has been started at port',port)
 })
-})
-app.get('/api/books', (req, res) => {
-Book.getBooks((err, books) => {
-if (err) {
-throw err
-}
-res.json(books)
-})
-})
-app.get('/api/books/:_id', (req, res) => {
-Book.getBookById(req.params._id, (err, book) => {
-if (err) {
-throw err
-}
-res.json(book)
-})
-})
-app.post('/api/genres',(req, res)=>{
-var genre = req.body
-console.log(genre)
-Genre.addGenres(genre, (err, genre)=>{
-if(err){
-throw err
-}
-res.json(genre)
-})
-
-})
-app.listen(port)
-console.log('running on port', port)
-*/
